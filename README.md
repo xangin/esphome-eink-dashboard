@@ -7,4 +7,4 @@
 
 ## References
 - https://github.com/DeastinY/esphome-waveshare-e-paper-dashboard
-[GTFS-RT Custom Component](https://github.com/zacs/ha-gtfs-rt)
+- [GTFS-RT Custom Component](https://github.com/zacs/ha-gtfs-rt)
