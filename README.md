@@ -21,7 +21,7 @@
 - [微雪 墨水屏裸屏 SPI驅動板 ESP32](https://detail.tmall.com/item.htm?id=605757128869) - wifi+藍牙版本(ESP32)
 - [IKEA RIBBA 相框 13x18公分](https://www.ikea.com.tw/zh/products/wall-decoration/frames/ribba-art-40378415) - 外框有黑白兩色，**注意裱框紙開孔較小，需要挖大**
 
-## 安裝方式
+## Installation 安裝方式
 
 1. 將`/fonts`資料夾及`esp32-eink-dashboard.yaml`放到HA/config/esphome的資料夾內
 2. 將`/package`內的`eink_dashboard.yaml`放到HA/config/package內
@@ -35,9 +35,33 @@
 
 ## ESPHome yaml 說明
 
-以下說明幾個程式中的重點地方
+因為預設螢幕不會自動更新`update_interval: never`，是靠在HA按下ESPhome內的虛擬按鈕觸發更新，流程如下:
 
-### 
+### 1. 上電啟動等sensor載入差不多就會執行以下程式碼:   
+
+```YAML
+esphome:
+  on_boot:
+    priority: -100
+    then: 
+      - delay: 20s
+      - component.update: my_display #刷新螢幕
+```
+
+### 2. 建立虛擬按鈕，讓HA按下此按鈕時，會更新面板
+
+```YAML
+button:
+  - platform: template
+    name: '${devicename} Refresh'
+    icon: 'mdi:update'
+    on_press:
+      then:
+        - component.update: 'my_display'
+    internal: false
+```
+
+### 如果不需要這麼做，則可將`update_interval:`設定成想要的時間，並把上面的程式碼都刪掉
 
 
 ## References
