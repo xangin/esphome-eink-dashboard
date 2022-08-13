@@ -107,8 +107,6 @@ script:
 
 
 
-
-
 ## References
 - https://github.com/Madelena/esphome-weatherman-dashboard/
 
