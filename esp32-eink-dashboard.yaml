@@ -4,11 +4,7 @@ esphome:
   name: esp32-eink-dashboard
   platform: ESP32
   board: esp32dev
-  on_boot:
-    priority: -100
-    then: 
-      - delay: 20s
-      - component.update: my_display
+
       
 # Enable logging
 logger:
@@ -309,9 +305,9 @@ text_sensor:
     entity_id: sensor.eink_sensors
     attribute: forecast_temperature_4
     id: forecast_temperature_4
-#    on_value:
-#      then:
-#        - script.execute: all_data_received
+    on_value:
+      then:
+        - script.execute: all_data_received
 
 button:
   - platform: template
@@ -322,17 +318,17 @@ button:
         - component.update: 'my_display'
     internal: false
 
-# script:
-#   - id: all_data_received
-#     mode: single
-#     then:
-#       - if:
-#           condition:
-#             binary_sensor.is_on: 'eink_refresh'
-#           then:
-#             - component.update: 'my_display'
-#       - delay: 15min
-#       - script.execute: all_data_received
+script:
+  - id: all_data_received
+    mode: single
+    then:
+      - if:
+          condition:
+            binary_sensor.is_on: 'eink_refresh'
+          then:
+            - component.update: 'my_display'
+      - delay: 15min
+      - script.execute: all_data_received
       
 # Define colors
 # This design is white on black so this is necessary.
