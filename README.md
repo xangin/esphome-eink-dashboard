@@ -1,9 +1,9 @@
 # ESPHome E-ink Dashboard
 感謝[Madelena](https://github.com/Madelena/esphome-weatherman-dashboard/)提供本專案硬體架構與程式碼的發想
 
-本專案的E-ink資訊板放在玄關處，當左上方的Zigbee人體感應器偵測到有人時且在指定的時段內，會自動更新顯示內容
+本專案的E-ink資訊板放在玄關處，在指定的時段內每15分鐘，會自動更新顯示內容
 
-<img src="https://user-images.githubusercontent.com/56766371/184292623-32fe29f9-7cd7-4407-84ca-c2a5a2b17f17.jpg" width="66%" alt="Context"/>
+<img src="https://user-images.githubusercontent.com/56766371/184495447-3c9c7ea9-0f64-442d-b695-d47738ba2d2d.jpg" width="66%" alt="Context"/>
 
 
 資訊板顯示內容包括:
@@ -11,6 +11,8 @@
 - 各房間溫溼度
 - 當下天氣預報
 - 未來四小時天氣預報
+
+<img src="https://user-images.githubusercontent.com/56766371/184495454-a9595013-f24a-4c55-b7f8-b29cdee5af32.jpg" width="66%" alt="Context"/>
 
 以下將說明硬體架構、ESPHome yaml code與Home assistant yaml code
 
@@ -25,7 +27,7 @@
 
 1. 將`/fonts`資料夾及`esp32-eink-dashboard.yaml`放到HA/config/esphome的資料夾內
 2. 將`/package`內的`eink_dashboard.yaml`放到HA/config/package內
-3. 將`esp32-eink-dashboard.yaml`及`eink_dashboard.yaml`的內容修改成自己HA裡的實體ID，**解說在下方**
+3. 將`esp32-eink-dashboard.yaml`及`eink_dashboard_sensor.yaml`的內容修改成自己HA裡的實體ID，**解說在下方**
 4. HA檢查YAML code有無錯誤
     1. 開發工具>YAML>檢查設定內容，確認左下角通知沒有出現錯誤
     2. YAML 設定新載入中>模板實體
@@ -35,20 +37,7 @@
 
 ## ESPHome yaml 說明
 
-因為預設螢幕不會自動更新`update_interval: never`，是靠在HA按下ESPhome內的虛擬按鈕觸發更新，流程如下:
-
-### 1. 上電啟動等sensor載入差不多就會執行以下程式碼:   
-
-```YAML
-esphome:
-  on_boot:
-    priority: -100
-    then: 
-      - delay: 20s
-      - component.update: my_display #刷新螢幕
-```
-
-### 2. 建立虛擬按鈕，讓HA按下此按鈕時，會更新面板
+### 在HA內手動更新面板
 
 ```YAML
 button:
@@ -61,9 +50,66 @@ button:
     internal: false
 ```
 
-### 如果不需要這麼做，則可將`update_interval:`設定成想要的時間，並把上面的程式碼都刪掉
+
+### 將HA的時間帶進ESPHome
+
+```YAML
+time:
+  - platform: homeassistant
+    id: ha_time
+```
+
+
+### 根據來自HA的binary sensor來決定現在是否要更新面板，晚上睡覺無人時就不用更新以延長面板壽命
+
+```YAML
+binary_sensor:
+  - platform: homeassistant
+    id: 'eink_refresh'
+    entity_id: 'binary_sensor.eink_refresh_time'
+```
+
+
+### 面板更新時機
+
+因為預設螢幕不會自動更新`update_interval: never`，是當資料都差不多收到後就執行腳本來更新內容，流程如下:
+
+#### 1. 等這個sensor有接收到資料後就執行腳本:  
+
+```YAML
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_temperature_4
+    id: forecast_temperature_4
+    on_value: 
+      then:
+        - script.execute: all_data_received 
+```
+
+#### 2. 執行all_data_received腳本，每15分鐘會重複執行此腳本以更新面板
+
+```YAML
+script:
+  - id: all_data_received
+    mode: single
+    then:
+      - if:
+          condition:
+            binary_sensor.is_on: 'eink_refresh'
+          then:
+            - component.update: 'my_display'
+      - delay: 15min
+      - script.execute: all_data_received
+```
+
+## HA template sensor 說明
+
+
+
+
 
 
 ## References
 - https://github.com/Madelena/esphome-weatherman-dashboard/
+
 
