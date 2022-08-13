@@ -5,7 +5,6 @@
 ###########################################################
 template:
   - sensor: 
-      #{{ as_timestamp(state_attr('weather.myhome', 'forecast')[0].datetime) | timestamp_custom('%a') | upper }}
       - name: "eink_sensors"
         unique_id: eink_sensors 
         state: >
