@@ -26,12 +26,12 @@
 ## Installation 安裝方式
 
 1. 將`/fonts`資料夾及`esp32-eink-dashboard.yaml`放到HA/config/esphome的資料夾內
-2. 將`/package`內的`eink_dashboard.yaml`放到HA/config/package內
+2. 將`/package`內的`eink_dashboard_sensor.yaml`放到HA/config/package內
 3. 將`esp32-eink-dashboard.yaml`及`eink_dashboard_sensor.yaml`的內容修改成自己HA裡的實體ID，**解說在下方**
 4. HA檢查YAML code有無錯誤
     1. 開發工具>YAML>檢查設定內容，確認左下角通知沒有出現錯誤
     2. YAML 設定新載入中>模板實體
-    3. 開發工具>狀態>檢查sensor.eink_sensors有確實出現，以及內容是自己想要的
+    3. 開發工具>狀態>檢查`sensor.eink_sensors`有確實出現，以及內容是自己想要的
 5. 在ESPhome將`esp32-eink-dashboard.yaml`燒錄至ESP32模組
 6. 完成!
 
@@ -86,7 +86,7 @@ binary_sensor:
         - script.execute: all_data_received 
 ```
 
-#### 2. 執行all_data_received腳本，每15分鐘會重複執行此腳本以更新面板
+#### 2. 執行all_data_received腳本，每15分鐘會重複執行此腳本且當binary_sensor是on才會更新面板
 
 ```YAML
 script:
@@ -104,6 +104,19 @@ script:
 
 ## HA template sensor 說明
 
+**要先確認在已經將以下程式碼寫在`configuration.yaml`內，這樣`eink_dashboard_sensor.yaml`檔案放進去才會生效**
+
+![](https://user-images.githubusercontent.com/56766371/184566430-d2dff49b-38cd-4ddd-a775-eaadf7099fc1.png)
+
+
+由於天氣預報是`weather`類型，非`sensor`類型，沒辦法直接丟給ESPHome處理，所以利用此template sensor
+
+將想要的資料格式化後再丟給ESPHome顯示，`weather.myhome`是我用的天氣預報實體名稱，請記得更換成自己的ID
+
+`attributes`是以下各項是將各小時的天氣預報拆分成好幾個屬性，分別是:
+- 時間  `forecast_weekday_1`
+- 天氣圖示  `forecast_condition_1`
+- 氣溫  `forecast_temperature_1`
 
 
 
