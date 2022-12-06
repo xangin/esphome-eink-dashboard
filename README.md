@@ -3,6 +3,8 @@
 
 本專案的E-ink資訊板放在玄關處，在指定的時段內每15分鐘，會自動更新顯示內容
 
+另有直式只顯示日期與天氣資訊，可參考[E-ink weather board](https://github.com/xangin/eink-weather-board)
+
 <img src="https://user-images.githubusercontent.com/56766371/184495447-3c9c7ea9-0f64-442d-b695-d47738ba2d2d.jpg" width="66%" alt="Context"/>
 
 
