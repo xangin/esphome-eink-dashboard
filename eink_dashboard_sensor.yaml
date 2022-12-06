@@ -3,6 +3,7 @@
 ##       Weather Forecast Sensors
 ##
 ###########################################################
+# 將weather.myhome取代成自己的天氣預報實體
 template:
   - sensor: 
       - name: "eink_sensors"
