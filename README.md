@@ -113,10 +113,11 @@ script:
 
 將想要的資料格式化後再丟給ESPHome顯示，`weather.myhome`是我用的天氣預報實體名稱，請記得更換成自己的ID
 
-`attributes`是以下各項是將各小時的天氣預報拆分成好幾個屬性，分別是:
-- 時間  `forecast_weekday_1`
-- 天氣圖示  `forecast_condition_1`
-- 氣溫  `forecast_temperature_1`
+`attributes`是將要使用的資訊從天氣預報拆分成出來，分別是:
+- 這小時的氣溫:  `today_temperature`
+- 未來四小時的時間:  `forecast_weekday_1`, `forecast_weekday_2`, `forecast_weekday_3`, `forecast_weekday_4`
+- 未來四小時的天氣圖示:  `forecast_condition_1`, `forecast_condition_2`, `forecast_condition_3`, `forecast_condition_4`
+- 未來四小時的氣溫:  `forecast_temperature_1`, `forecast_temperature_2`, `forecast_temperature_3`, `forecast_temperature_4`
 
 
 
