@@ -28,7 +28,7 @@
 ## Installation 安裝方式
 
 1. 將`/fonts`資料夾內的檔案及`esp32-eink-dashboard.yaml`放到HA/config/esphome的資料夾內
-2. 將`eink_dashboard_sensor.yaml`放到HA/config/package內
+2. 將`eink_dashboard_sensor.yaml`放到HA/config/packages內
 3. 將`esp32-eink-dashboard.yaml`及`eink_dashboard_sensor.yaml`的內容修改成自己HA裡的實體ID，**解說在下方**
 4. HA檢查YAML code有無錯誤
     1. 開發工具>YAML>檢查設定內容，確認左下角通知沒有出現錯誤
