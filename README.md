@@ -1,5 +1,10 @@
 # ESPHome E-ink Dashboard
+
+<a href="https://www.buymeacoffee.com/xangin" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="20" width="130"></a>
+
 感謝[Madelena](https://github.com/Madelena/esphome-weatherman-dashboard/)提供本專案硬體架構與程式碼的發想
+
+Thanks [Madelena](https://github.com/Madelena/esphome-weatherman-dashboard/) for inspired this project ideas and source code of weather data
 
 本專案的E-ink資訊板放在玄關處，在指定的時段內每15分鐘，會自動更新顯示內容
 
