@@ -120,11 +120,36 @@ script:
 
 將想要的資料格式化後再丟給ESPHome顯示，`weather.myhome`是我用的天氣預報實體名稱，請記得更換成自己的ID
 
+在HA 2023.12之後，天氣預報改由呼叫service來取得未來的資訊，所以利用此template sensor將想要的資料格式化後再丟給天氣板顯示
+
+由於預設是顯示取得每小時的預報，**請先確認目前用的天氣整合有支援小時預報 (內建的met.no有)**
+
+以下YAML表示每小時的1分將會呼叫取得"每小時"的天氣預報服務，同時更新內容在sensor.eink_sensors裡面
+
+要注意更新面板的時機要在更新天氣預報之後，不然都會看到前一個小時的預報
+
+```YAML
+
+  - trigger:
+      - platform: time_pattern     
+        hours: "/1" 
+        minutes: 1
+    action:
+      - service: weather.get_forecasts
+        target:
+          entity_id: weather.myhome #replace with your weather forecast entity id
+        data:
+          type: hourly
+        response_variable: hourly  
+
+```
+
 `attributes`是將要使用的資訊從天氣預報拆分成出來，分別是:
 - 這小時的氣溫:  `today_temperature`
 - 未來四小時的時間:  `forecast_weekday_1`, `forecast_weekday_2`, `forecast_weekday_3`, `forecast_weekday_4`
 - 未來四小時的天氣圖示:  `forecast_condition_1`, `forecast_condition_2`, `forecast_condition_3`, `forecast_condition_4`
 - 未來四小時的氣溫:  `forecast_temperature_1`, `forecast_temperature_2`, `forecast_temperature_3`, `forecast_temperature_4`
+
 
 
 
