@@ -6,17 +6,17 @@ English | [正體中文](https://github.com/xangin/esphome-eink-dashboard/blob/m
 
 Thanks to [Madelena](https://github.com/Madelena/esphome-weatherman-dashboard/) for inspiring this project and providing the source code for weather data.
 
-本專案的E-ink資訊板放在玄關處，在指定的時段內每15分鐘，會自動更新顯示內容
+This E-ink dashboard is placed at the entrance and updates automatically every 15 minutes during the specified time period.
 
-另有直式只顯示日期與天氣資訊，可參考[E-ink weather board](https://github.com/xangin/eink-weather-board)
+There is also a vertical version that only displays date and weather information, which can be referred to at [E-ink weather board](https://github.com/xangin/eink-weather-board).
 
 <img src="https://user-images.githubusercontent.com/56766371/184495447-3c9c7ea9-0f64-442d-b695-d47738ba2d2d.jpg" width="66%" alt="Context"/>
 
-資訊板顯示內容包括:
-- 今天日期
-- 各房間溫溼度
-- 當下天氣預報
-- 未來四小時天氣預報
+The information board displays:
+- Today's date
+- Temperature and humidity of each room
+- Current weather forecast
+- Weather forecast for the next four hours
 
 <img src="https://user-images.githubusercontent.com/56766371/184495454-a9595013-f24a-4c55-b7f8-b29cdee5af32.jpg" width="66%" alt="Context"/>
 
@@ -40,9 +40,9 @@ Below are the hardware structure, ESPHome yaml code, and Home assistant yaml cod
 5. Flash `esp32-eink-dashboard.yaml` to the ESP32 module in ESPHome.
 6. Done!
 
-## ESPHome yaml 說明
+## ESPHome YAML Explanation
 
-### 在HA內手動更新面板
+### Manually update the panel in HA
 
 ```YAML
 button:
@@ -56,7 +56,7 @@ button:
 ```
 
 
-### 將HA的時間帶進ESPHome
+### Pass HA time to ESPHome
 
 ```YAML
 time:
@@ -65,7 +65,7 @@ time:
 ```
 
 
-### 根據來自HA的binary sensor來決定現在是否要更新面板，晚上睡覺無人時就不用更新以延長面板壽命
+### Decide whether to update the panel based on a binary sensor from HA, to extend panel life by not updating during sleep time
 
 ```YAML
 binary_sensor:
@@ -75,11 +75,11 @@ binary_sensor:
 ```
 
 
-### 面板更新時機
+### Panel update timing
 
-因為預設螢幕不會自動更新`update_interval: never`，是當資料都差不多收到後就執行腳本來更新內容，流程如下:
+The screen does not automatically update by default update_interval: never. It updates when data is received and the script is executed, as follows:
 
-#### 1. 等這個sensor有接收到資料後就執行腳本:  
+#### 1. Execute the script when this sensor receives data: 
 
 ```YAML
   - platform: homeassistant
@@ -91,7 +91,7 @@ binary_sensor:
         - script.execute: all_data_received 
 ```
 
-#### 2. 執行all_data_received腳本，每15分鐘會重複執行此腳本且當binary_sensor是on才會更新面板
+#### 2. Execute the all_data_received script, which runs every 15 minutes and updates the panel only when the binary sensor is on
 
 ```YAML
 script:
@@ -107,24 +107,22 @@ script:
       - script.execute: all_data_received
 ```
 
-## HA template sensor 說明
+## HA Template Sensor Explanation
 
-**要先確認在已經將以下程式碼寫在`configuration.yaml`內，這樣`eink_dashboard_sensor.yaml`檔案放進去才會生效**
+**Ensure the following code is written in `configuration.yaml` for the `eink_dashboard_sensor.yaml` file to take effect**
 
 ![](https://user-images.githubusercontent.com/56766371/184566430-d2dff49b-38cd-4ddd-a775-eaadf7099fc1.png)
 
 
-由於天氣預報是`weather`類型，非`sensor`類型，沒辦法直接丟給ESPHome處理，所以利用此template sensor
+Since the weather forecast is of type weather and not sensor, it cannot be directly processed by ESPHome, so we use this template sensor.
 
-將想要的資料格式化後再丟給ESPHome顯示，`weather.myhome`是我用的天氣預報實體名稱，請記得更換成自己的ID
+Format the desired data and send it to ESPHome for display. weather.myhome is my weather forecast entity name, remember to replace it with your own ID.
 
-在HA 2023.12之後，天氣預報改由呼叫service來取得未來的資訊，所以利用此template sensor將想要的資料格式化後再丟給天氣板顯示
+By default, it shows hourly forecasts. Ensure your current weather integration supports hourly forecasts (built-in met.no does).
 
-由於預設是顯示取得每小時的預報，**請先確認目前用的天氣整合有支援小時預報 (內建的met.no有)**
+The following YAML indicates that the hourly weather forecast service is called at 1 minute past each hour, updating the content in `sensor.eink_sensors`.
 
-以下YAML表示每小時的1分將會呼叫取得"每小時"的天氣預報服務，同時更新內容在sensor.eink_sensors裡面
-
-要注意更新面板的時機要在更新天氣預報之後，不然都會看到前一個小時的預報
+Ensure the panel update timing is after the weather forecast update to avoid showing the previous hour's forecast.
 
 ```YAML
 
@@ -142,13 +140,11 @@ script:
 
 ```
 
-`attributes`是將要使用的資訊從天氣預報拆分成出來，分別是:
-- 這小時的氣溫:  `today_temperature`
-- 未來四小時的時間:  `forecast_weekday_1`, `forecast_weekday_2`, `forecast_weekday_3`, `forecast_weekday_4`
-- 未來四小時的天氣圖示:  `forecast_condition_1`, `forecast_condition_2`, `forecast_condition_3`, `forecast_condition_4`
-- 未來四小時的氣溫:  `forecast_temperature_1`, `forecast_temperature_2`, `forecast_temperature_3`, `forecast_temperature_4`
-
-
+`attributes` splits out the information to be used from the weather forecast:
+- Temperature of this hour:  `today_temperature`
+- Forecast times for the next four hours: `forecast_weekday_1`, `forecast_weekday_2`, `forecast_weekday_3`, `forecast_weekday_4`
+- Weather icons for the next four hours:  `forecast_condition_1`, `forecast_condition_2`, `forecast_condition_3`, `forecast_condition_4`
+- Temperatures for the next four hours:   `forecast_temperature_1`, `forecast_temperature_2`, `forecast_temperature_3`, `forecast_temperature_4`
 
 
 ## References
