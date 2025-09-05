@@ -14,7 +14,6 @@ api:
 
 ota:
   - platform: esphome
-    password: !secret ota_password
 
 wifi:
   networks:
@@ -357,7 +356,9 @@ display:
   - platform: waveshare_epaper
     cs_pin: GPIO15
     dc_pin: GPIO27
-    busy_pin: GPIO25
+    busy_pin: 
+      number: GPIO25
+      inverted: true
     reset_pin: GPIO26
     model: 7.50inV2
     update_interval: never
@@ -375,6 +376,7 @@ display:
           {"lightning", "\U000F0593"},
           {"lightning-rainy", "\U000F067E"},
           {"clear-night", "\U000F0594"},
+          {"night", "\U000F0594"},
           {"night-partly-cloudy", "\U000F0F31"},          
           {"partlycloudy", "\U000F0595"},
           {"partly-lightning", "\U000F0F32"},
